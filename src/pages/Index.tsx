@@ -100,49 +100,61 @@ const Index = () => {
 
       <main className="container mx-auto px-4 py-8">
         {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
-            Cloud Provider Services Collector
+        <div className="text-center mb-12 relative">
+          <div className="absolute inset-0 -z-10">
+            <div className="absolute top-0 left-1/4 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary-glow/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          </div>
+          
+          <h1 className="text-3xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-primary-glow to-success bg-clip-text text-transparent leading-tight">
+            One Click Total Clarity
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Demonstration webapp for collecting cloud infrastructure data - built with Lovable
+          <h2 className="text-xl md:text-3xl font-semibold mb-4 text-foreground">
+            Know the Cost and Carbon of Your Digital Platform
+          </h2>
+          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            Transform complex cloud infrastructure data into actionable insights. 
+            Track spending, measure carbon footprint, and optimize your digital operations with enterprise-grade precision.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
           {/* Form Section */}
-          <Card className="shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Cloud className="w-5 h-5" />
-                Cloud Services Information
+          <Card className="shadow-2xl border-2 border-primary/10 hover:border-primary/20 transition-all duration-300 backdrop-blur-sm bg-card/95">
+            <CardHeader className="bg-gradient-to-r from-primary/5 to-primary-glow/5 rounded-t-lg">
+              <CardTitle className="flex items-center gap-3 text-xl">
+                <div className="p-2 rounded-full bg-gradient-to-br from-primary to-primary-glow">
+                  <Cloud className="w-5 h-5 text-primary-foreground" />
+                </div>
+                Digital Platform Analytics
               </CardTitle>
-              <CardDescription>
-                Fill out your organization's cloud infrastructure details
+              <CardDescription className="text-base">
+                Collect your cloud infrastructure data to unlock cost and carbon insights
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="organization">Organization Name</Label>
+            <CardContent className="p-8">
+              <form onSubmit={handleSubmit} className="space-y-8">
+                <div className="space-y-3">
+                  <Label htmlFor="organization" className="text-base font-medium">Organization Name</Label>
                   <Input
                     id="organization"
                     placeholder="e.g., Acme Corporation"
                     value={formData.organization}
                     onChange={(e) => setFormData({...formData, organization: e.target.value})}
                     required
+                    className="h-12 text-base border-2 focus:border-primary/50 transition-colors"
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="provider">Primary Cloud Provider</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="provider" className="text-base font-medium">Primary Cloud Provider</Label>
                   <Select value={formData.provider} onValueChange={(value) => setFormData({...formData, provider: value})} required>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-12 text-base border-2 focus:border-primary/50">
                       <SelectValue placeholder="Select your main cloud provider" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-background/95 backdrop-blur-sm">
                       {cloudProviders.map((provider) => (
-                        <SelectItem key={provider.value} value={provider.value}>
+                        <SelectItem key={provider.value} value={provider.value} className="text-base">
                           {provider.label}
                         </SelectItem>
                       ))}
@@ -150,15 +162,15 @@ const Index = () => {
                   </Select>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="services">Service Categories</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="services" className="text-base font-medium">Service Categories</Label>
                   <Select value={formData.services} onValueChange={(value) => setFormData({...formData, services: value})} required>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-12 text-base border-2 focus:border-primary/50">
                       <SelectValue placeholder="Select primary service type" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-background/95 backdrop-blur-sm">
                       {serviceCategories.map((service) => (
-                        <SelectItem key={service.value} value={service.value}>
+                        <SelectItem key={service.value} value={service.value} className="text-base">
                           {service.label}
                         </SelectItem>
                       ))}
@@ -166,8 +178,8 @@ const Index = () => {
                   </Select>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="monthlySpend">Estimated Monthly Spend (USD)</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="monthlySpend" className="text-base font-medium">Estimated Monthly Spend (USD)</Label>
                   <Input
                     id="monthlySpend"
                     type="number"
@@ -175,33 +187,36 @@ const Index = () => {
                     value={formData.monthlySpend}
                     onChange={(e) => setFormData({...formData, monthlySpend: e.target.value})}
                     required
+                    className="h-12 text-base border-2 focus:border-primary/50 transition-colors"
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="primaryUse">Primary Use Case</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="primaryUse" className="text-base font-medium">Primary Use Case</Label>
                   <Input
                     id="primaryUse"
                     placeholder="e.g., Web application hosting, Data analytics"
                     value={formData.primaryUse}
                     onChange={(e) => setFormData({...formData, primaryUse: e.target.value})}
                     required
+                    className="h-12 text-base border-2 focus:border-primary/50 transition-colors"
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="notes">Additional Notes</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="notes" className="text-base font-medium">Additional Notes</Label>
                   <Textarea
                     id="notes"
                     placeholder="Any additional details about your cloud infrastructure..."
                     value={formData.notes}
                     onChange={(e) => setFormData({...formData, notes: e.target.value})}
-                    rows={3}
+                    rows={4}
+                    className="text-base border-2 focus:border-primary/50 transition-colors resize-none"
                   />
                 </div>
 
-                <Button type="submit" className="w-full" size="lg">
-                  Submit Cloud Data
+                <Button type="submit" variant="hero" className="w-full h-14 text-lg font-semibold">
+                  🚀 Analyze Platform Impact
                 </Button>
               </form>
             </CardContent>
@@ -210,27 +225,36 @@ const Index = () => {
           {/* Results & Demo Info */}
           <div className="space-y-6">
             {/* Submissions */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Database className="w-5 h-5" />
-                  Collected Data ({submissions.length})
+            <Card className="shadow-xl border-2 border-success/10 hover:border-success/20 transition-all duration-300">
+              <CardHeader className="bg-gradient-to-r from-success/5 to-primary/5 rounded-t-lg">
+                <CardTitle className="flex items-center gap-3 text-xl">
+                  <div className="p-2 rounded-full bg-gradient-to-br from-success to-primary">
+                    <Database className="w-5 h-5 text-primary-foreground" />
+                  </div>
+                  Collected Insights ({submissions.length})
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-6">
                 {submissions.length === 0 ? (
-                  <p className="text-muted-foreground text-center py-4">
-                    No submissions yet. Fill out the form to see data collection in action!
-                  </p>
+                  <div className="text-center py-8">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-muted to-muted-foreground/20 flex items-center justify-center">
+                      <ChartBar className="w-8 h-8 text-muted-foreground" />
+                    </div>
+                    <p className="text-muted-foreground text-lg">
+                      No insights yet. Fill out the form to see data collection in action!
+                    </p>
+                  </div>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {submissions.slice(-3).map((submission) => (
-                      <div key={submission.id} className="p-3 bg-muted/50 rounded-lg">
-                        <div className="font-medium">{submission.organization}</div>
-                        <div className="text-sm text-muted-foreground">
-                          {submission.provider} • ${submission.monthlySpend}/month
+                      <div key={submission.id} className="p-4 bg-gradient-to-r from-muted/30 to-muted/50 rounded-xl border border-muted hover:border-primary/30 transition-colors">
+                        <div className="font-semibold text-lg">{submission.organization}</div>
+                        <div className="text-muted-foreground flex items-center gap-2">
+                          <Badge variant="outline">{submission.provider}</Badge>
+                          <span>•</span>
+                          <span className="font-medium">${submission.monthlySpend}/month</span>
                         </div>
-                        <div className="text-xs text-muted-foreground">{submission.timestamp}</div>
+                        <div className="text-xs text-muted-foreground mt-2">{submission.timestamp}</div>
                       </div>
                     ))}
                   </div>
@@ -239,49 +263,52 @@ const Index = () => {
             </Card>
 
             {/* Lovable Pros & Cons */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <ChartBar className="w-5 h-5" />
-                  Lovable Demo Analysis
+            <Card className="shadow-xl border-2 border-warning/10 hover:border-warning/20 transition-all duration-300">
+              <CardHeader className="bg-gradient-to-r from-warning/5 to-primary-glow/5 rounded-t-lg">
+                <CardTitle className="flex items-center gap-3 text-xl">
+                  <div className="p-2 rounded-full bg-gradient-to-br from-warning to-primary-glow">
+                    <ChartBar className="w-5 h-5 text-primary-foreground" />
+                  </div>
+                  Lovable Platform Analysis
                 </CardTitle>
-                <CardDescription>Pros and cons of building this with Lovable</CardDescription>
+                <CardDescription className="text-base">Honest assessment of building this solution with Lovable</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <h4 className="font-medium text-success mb-2 flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4" />
-                    Pros
+              <CardContent className="p-6 space-y-6">
+                <div className="p-4 rounded-xl bg-gradient-to-r from-success/5 to-success/10 border border-success/20">
+                  <h4 className="font-semibold text-success mb-3 flex items-center gap-2 text-lg">
+                    <CheckCircle2 className="w-5 h-5" />
+                    Why Lovable Excels
                   </h4>
-                  <ul className="space-y-1 text-sm">
+                  <ul className="space-y-2 text-sm">
                     {prosAndCons.pros.map((pro, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <span className="text-success mt-1">•</span>
-                        <span>{pro}</span>
+                      <li key={index} className="flex items-start gap-3">
+                        <span className="text-success mt-1 text-lg">✓</span>
+                        <span className="text-foreground">{pro}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                <div>
-                  <h4 className="font-medium text-destructive mb-2 flex items-center gap-2">
-                    <XCircle className="w-4 h-4" />
-                    Limitations (Solvable)
+                <div className="p-4 rounded-xl bg-gradient-to-r from-destructive/5 to-destructive/10 border border-destructive/20">
+                  <h4 className="font-semibold text-destructive mb-3 flex items-center gap-2 text-lg">
+                    <XCircle className="w-5 h-5" />
+                    Current Limitations (Solvable)
                   </h4>
-                  <ul className="space-y-1 text-sm">
+                  <ul className="space-y-2 text-sm">
                     {prosAndCons.cons.map((con, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <span className="text-destructive mt-1">•</span>
-                        <span>{con}</span>
+                      <li key={index} className="flex items-start gap-3">
+                        <span className="text-destructive mt-1 text-lg">→</span>
+                        <span className="text-foreground">{con}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                <div className="pt-4 border-t">
-                  <p className="text-sm text-muted-foreground">
-                    <strong>Next Step:</strong> Connect to Supabase for backend functionality including 
-                    authentication, data persistence, API integrations, and advanced analytics.
+                <div className="p-4 rounded-xl bg-gradient-to-r from-primary/5 to-primary-glow/5 border border-primary/20">
+                  <p className="font-medium text-primary mb-2">🚀 Production Ready Path</p>
+                  <p className="text-sm text-foreground">
+                    Connect to <strong>Supabase</strong> for enterprise functionality: authentication, 
+                    data persistence, API integrations, and advanced analytics capabilities.
                   </p>
                 </div>
               </CardContent>
