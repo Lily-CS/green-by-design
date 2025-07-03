@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle2, XCircle, Cloud, Database, ChartBar } from "lucide-react";
+import { Cloud, Database, ChartBar } from "lucide-react";
 
 const cloudProviders = [
   { value: "aws", label: "Amazon Web Services (AWS)" },
@@ -67,23 +67,6 @@ const Index = () => {
     });
   };
 
-  const prosAndCons = {
-    pros: [
-      "Rapid prototyping - Built this entire form in minutes",
-      "No backend setup needed initially",
-      "Beautiful UI components out of the box",
-      "Responsive design automatically",
-      "Easy deployment and sharing",
-      "Perfect for MVPs and demos"
-    ],
-    cons: [
-      "Limited to frontend-only without Supabase integration",
-      "No data persistence without backend",
-      "Cannot integrate with real cloud APIs yet",
-      "No user authentication in basic setup",
-      "R calculations would need backend integration"
-    ]
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
@@ -262,57 +245,6 @@ const Index = () => {
               </CardContent>
             </Card>
 
-            {/* Lovable Pros & Cons */}
-            <Card className="shadow-xl border-2 border-warning/10 hover:border-warning/20 transition-all duration-300">
-              <CardHeader className="bg-gradient-to-r from-warning/5 to-primary-glow/5 rounded-t-lg">
-                <CardTitle className="flex items-center gap-3 text-xl">
-                  <div className="p-2 rounded-full bg-gradient-to-br from-warning to-primary-glow">
-                    <ChartBar className="w-5 h-5 text-primary-foreground" />
-                  </div>
-                  Lovable Platform Analysis
-                </CardTitle>
-                <CardDescription className="text-base">Honest assessment of building this solution with Lovable</CardDescription>
-              </CardHeader>
-              <CardContent className="p-6 space-y-6">
-                <div className="p-4 rounded-xl bg-gradient-to-r from-success/5 to-success/10 border border-success/20">
-                  <h4 className="font-semibold text-success mb-3 flex items-center gap-2 text-lg">
-                    <CheckCircle2 className="w-5 h-5" />
-                    Why Lovable Excels
-                  </h4>
-                  <ul className="space-y-2 text-sm">
-                    {prosAndCons.pros.map((pro, index) => (
-                      <li key={index} className="flex items-start gap-3">
-                        <span className="text-success mt-1 text-lg">✓</span>
-                        <span className="text-foreground">{pro}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="p-4 rounded-xl bg-gradient-to-r from-destructive/5 to-destructive/10 border border-destructive/20">
-                  <h4 className="font-semibold text-destructive mb-3 flex items-center gap-2 text-lg">
-                    <XCircle className="w-5 h-5" />
-                    Current Limitations (Solvable)
-                  </h4>
-                  <ul className="space-y-2 text-sm">
-                    {prosAndCons.cons.map((con, index) => (
-                      <li key={index} className="flex items-start gap-3">
-                        <span className="text-destructive mt-1 text-lg">→</span>
-                        <span className="text-foreground">{con}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="p-4 rounded-xl bg-gradient-to-r from-primary/5 to-primary-glow/5 border border-primary/20">
-                  <p className="font-medium text-primary mb-2">🚀 Production Ready Path</p>
-                  <p className="text-sm text-foreground">
-                    Connect to <strong>Supabase</strong> for enterprise functionality: authentication, 
-                    data persistence, API integrations, and advanced analytics capabilities.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </main>
