@@ -75,7 +75,7 @@ const Index = () => {
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-glow"></div>
-            <h1 className="text-xl font-bold">CloudServices Demo</h1>
+            <h1 className="text-xl font-bold">Green by Design</h1>
           </div>
           <Badge variant="outline">Demo for Harsh</Badge>
         </div>
