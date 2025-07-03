@@ -7,7 +7,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Cloud, Database, ChartBar } from "lucide-react";
+import { Cloud, Database, ChartBar, Leaf, Globe, BarChart3, TrendingUp, Zap, Shield } from "lucide-react";
+import circuitBoard from "@/assets/circuit-board.jpg";
+import codeScreen from "@/assets/code-screen.jpg";
+import analyticsDashboard from "@/assets/analytics-dashboard.jpg";
 
 const cloudProviders = [
   { value: "aws", label: "Amazon Web Services (AWS)" },
@@ -84,21 +87,57 @@ const Index = () => {
       <main className="container mx-auto px-4 py-8">
         {/* Hero Section */}
         <div className="text-center mb-12 relative">
+          {/* Background Image */}
+          <div className="absolute inset-0 -z-20 overflow-hidden rounded-3xl">
+            <img 
+              src={circuitBoard} 
+              alt="Technology background" 
+              className="w-full h-full object-cover opacity-5"
+            />
+            <div className="absolute inset-0 bg-gradient-to-br from-background/80 to-muted/60"></div>
+          </div>
+          
           <div className="absolute inset-0 -z-10">
             <div className="absolute top-0 left-1/4 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>
             <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary-glow/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
           </div>
           
-          <h1 className="text-3xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-primary-glow to-success bg-clip-text text-transparent leading-tight">
-            One Click Total Clarity
-          </h1>
-          <h2 className="text-xl md:text-3xl font-semibold mb-4 text-foreground">
-            Know the Cost and Carbon of Your Digital Platform
-          </h2>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Transform complex cloud infrastructure data into actionable insights. 
-            Track spending, measure carbon footprint, and optimize your digital operations with enterprise-grade precision.
-          </p>
+          <div className="relative py-16">
+            <div className="flex justify-center mb-6">
+              <div className="p-4 rounded-full bg-gradient-to-br from-primary to-primary-glow shadow-lg">
+                <Leaf className="w-12 h-12 text-primary-foreground" />
+              </div>
+            </div>
+            
+            <h1 className="text-3xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-primary-glow to-success bg-clip-text text-transparent leading-tight">
+              One Click Total Clarity
+            </h1>
+            <h2 className="text-xl md:text-3xl font-semibold mb-4 text-foreground flex items-center justify-center gap-3">
+              <Globe className="w-8 h-8 text-primary" />
+              Know the Cost and Carbon of Your Digital Platform
+              <BarChart3 className="w-8 h-8 text-success" />
+            </h2>
+            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+              Transform complex cloud infrastructure data into actionable insights. 
+              Track spending, measure carbon footprint, and optimize your digital operations with enterprise-grade precision.
+            </p>
+            
+            {/* Feature Icons */}
+            <div className="flex justify-center gap-8 mt-8">
+              <div className="flex flex-col items-center gap-2 p-4 rounded-xl bg-background/50 backdrop-blur-sm border border-primary/10">
+                <TrendingUp className="w-6 h-6 text-success" />
+                <span className="text-sm font-medium">Cost Analytics</span>
+              </div>
+              <div className="flex flex-col items-center gap-2 p-4 rounded-xl bg-background/50 backdrop-blur-sm border border-primary/10">
+                <Zap className="w-6 h-6 text-warning" />
+                <span className="text-sm font-medium">Carbon Tracking</span>
+              </div>
+              <div className="flex flex-col items-center gap-2 p-4 rounded-xl bg-background/50 backdrop-blur-sm border border-primary/10">
+                <Shield className="w-6 h-6 text-primary" />
+                <span className="text-sm font-medium">Secure Platform</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
@@ -208,8 +247,18 @@ const Index = () => {
           {/* Results & Demo Info */}
           <div className="space-y-6">
             {/* Submissions */}
-            <Card className="shadow-xl border-2 border-success/10 hover:border-success/20 transition-all duration-300">
-              <CardHeader className="bg-gradient-to-r from-success/5 to-primary/5 rounded-t-lg">
+            <Card className="shadow-xl border-2 border-success/10 hover:border-success/20 transition-all duration-300 relative overflow-hidden">
+              {/* Background Image for Results Card */}
+              <div className="absolute inset-0 -z-10">
+                <img 
+                  src={analyticsDashboard} 
+                  alt="Analytics dashboard" 
+                  className="w-full h-full object-cover opacity-3"
+                />
+                <div className="absolute inset-0 bg-gradient-to-br from-card/90 to-card/95"></div>
+              </div>
+              
+              <CardHeader className="bg-gradient-to-r from-success/5 to-primary/5 rounded-t-lg relative">
                 <CardTitle className="flex items-center gap-3 text-xl">
                   <div className="p-2 rounded-full bg-gradient-to-br from-success to-primary">
                     <Database className="w-5 h-5 text-primary-foreground" />
@@ -217,25 +266,44 @@ const Index = () => {
                   Collected Insights ({submissions.length})
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-6">
+              <CardContent className="p-6 relative">
                 {submissions.length === 0 ? (
                   <div className="text-center py-8">
-                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-muted to-muted-foreground/20 flex items-center justify-center">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-muted to-muted-foreground/20 flex items-center justify-center shadow-lg">
                       <ChartBar className="w-8 h-8 text-muted-foreground" />
                     </div>
                     <p className="text-muted-foreground text-lg">
                       No insights yet. Fill out the form to see data collection in action!
                     </p>
+                    
+                    {/* Decorative Code Preview */}
+                    <div className="mt-6 p-4 rounded-lg bg-muted/30 border border-border/30 max-w-sm mx-auto">
+                      <img 
+                        src={codeScreen} 
+                        alt="Code preview" 
+                        className="w-full h-20 object-cover rounded opacity-60"
+                      />
+                      <p className="text-xs text-muted-foreground mt-2">Ready to process your data</p>
+                    </div>
                   </div>
                 ) : (
                   <div className="space-y-4">
                     {submissions.slice(-3).map((submission) => (
-                      <div key={submission.id} className="p-4 bg-gradient-to-r from-muted/30 to-muted/50 rounded-xl border border-muted hover:border-primary/30 transition-colors">
-                        <div className="font-semibold text-lg">{submission.organization}</div>
+                      <div key={submission.id} className="p-4 bg-gradient-to-r from-background/80 to-muted/60 rounded-xl border border-muted hover:border-primary/30 transition-colors backdrop-blur-sm">
+                        <div className="font-semibold text-lg flex items-center gap-2">
+                          <Globe className="w-4 h-4 text-primary" />
+                          {submission.organization}
+                        </div>
                         <div className="text-muted-foreground flex items-center gap-2">
-                          <Badge variant="outline">{submission.provider}</Badge>
+                          <Badge variant="outline" className="flex items-center gap-1">
+                            <Cloud className="w-3 h-3" />
+                            {submission.provider}
+                          </Badge>
                           <span>•</span>
-                          <span className="font-medium">${submission.monthlySpend}/month</span>
+                          <span className="font-medium flex items-center gap-1">
+                            <TrendingUp className="w-3 h-3 text-success" />
+                            ${submission.monthlySpend}/month
+                          </span>
                         </div>
                         <div className="text-xs text-muted-foreground mt-2">{submission.timestamp}</div>
                       </div>
