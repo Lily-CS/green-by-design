@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { calculateAWSCarbonFootprint, formatCarbonResult, CarbonCalculationResult } from "@/lib/carbon-calculator";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -41,22 +42,38 @@ const Index = () => {
     notes: ""
   });
   const [submissions, setSubmissions] = useState<any[]>([]);
+  const [totalCarbonFootprint, setTotalCarbonFootprint] = useState<number>(0);
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Calculate carbon footprint for this submission
+    const carbonResult = await calculateAWSCarbonFootprint(
+      Number(formData.monthlySpend),
+      formData.services,
+      'us-east-1' // Default region, could be made configurable
+    );
     
     const newSubmission = {
       ...formData,
       id: Date.now(),
-      timestamp: new Date().toLocaleDateString()
+      timestamp: new Date().toLocaleDateString(),
+      carbonFootprint: carbonResult
     };
     
-    setSubmissions([...submissions, newSubmission]);
+    const updatedSubmissions = [...submissions, newSubmission];
+    setSubmissions(updatedSubmissions);
+    
+    // Update total carbon footprint
+    const totalCarbon = updatedSubmissions.reduce((sum, s) => 
+      sum + (s.carbonFootprint?.co2eTons || 0), 0
+    );
+    setTotalCarbonFootprint(totalCarbon);
     
     toast({
       title: "Cloud Service Data Recorded!",
-      description: `Added ${formData.provider} services for ${formData.organization}`,
+      description: `Added ${formData.provider} services with ${formatCarbonResult(carbonResult)} impact`,
     });
     
     // Reset form
@@ -120,7 +137,12 @@ const Index = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Carbon Impact</p>
-                <p className="text-3xl font-bold text-warning">Calculating...</p>
+                <p className="text-3xl font-bold text-warning">
+                  {totalCarbonFootprint > 0 
+                    ? formatCarbonResult({ co2eTons: totalCarbonFootprint, kilowattHours: 0, cost: 0 })
+                    : "0 tons CO₂e"
+                  }
+                </p>
               </div>
               <div className="p-3 rounded-full bg-warning/10">
                 <Leaf className="w-6 h-6 text-warning" />
@@ -307,6 +329,17 @@ const Index = () => {
                         <span className="text-muted-foreground">Spend:</span>
                         <span className="font-medium text-success">${Number(submission.monthlySpend).toLocaleString()}/mo</span>
                       </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 text-sm mb-3">
+                      <Leaf className="w-4 h-4 text-warning" />
+                      <span className="text-muted-foreground">Carbon:</span>
+                      <span className="font-medium text-warning">
+                        {submission.carbonFootprint 
+                          ? formatCarbonResult(submission.carbonFootprint)
+                          : "0 kg CO₂e"
+                        }
+                      </span>
                     </div>
                     
                     <div className="text-xs text-muted-foreground flex items-center gap-2">
