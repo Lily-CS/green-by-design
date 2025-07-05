@@ -22,6 +22,7 @@ const cloudProviders = [
 ];
 
 const serviceCategories = [
+  { value: "all", label: "All Services" },
   { value: "compute", label: "Compute (EC2, VMs, App Engine)" },
   { value: "storage", label: "Storage (S3, Cloud Storage, Blob)" },
   { value: "database", label: "Database (RDS, CloudSQL, CosmosDB)" },
