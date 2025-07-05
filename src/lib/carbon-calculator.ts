@@ -94,3 +94,44 @@ export function formatCarbonResult(result: CarbonCalculationResult): string {
   }
   return `${result.co2eTons.toFixed(2)} tons CO₂e`
 }
+
+// Carbon comparison calculations
+export interface CarbonComparison {
+  flights: {
+    domesticFlights: number
+    internationalFlights: number
+  }
+  phones: {
+    smartphoneYears: number
+    phoneCharges: number
+  }
+  cars: {
+    milesDriven: number
+    gasoline: number // gallons
+  }
+}
+
+export function getCarbonComparisons(co2eTons: number): CarbonComparison {
+  // Average carbon footprints for comparison
+  const domesticFlightCO2 = 0.255 // tons CO2e per domestic flight (round trip)
+  const internationalFlightCO2 = 2.3 // tons CO2e per international flight (round trip)
+  const smartphoneYearCO2 = 0.07 // tons CO2e per smartphone per year
+  const phoneChargeCO2 = 0.0000084 // tons CO2e per phone charge
+  const carMileCO2 = 0.000404 // tons CO2e per mile driven (average car)
+  const gasolineCO2 = 0.0089 // tons CO2e per gallon of gasoline
+
+  return {
+    flights: {
+      domesticFlights: Math.round(co2eTons / domesticFlightCO2),
+      internationalFlights: Math.round(co2eTons / internationalFlightCO2 * 10) / 10
+    },
+    phones: {
+      smartphoneYears: Math.round(co2eTons / smartphoneYearCO2 * 10) / 10,
+      phoneCharges: Math.round(co2eTons / phoneChargeCO2)
+    },
+    cars: {
+      milesDriven: Math.round(co2eTons / carMileCO2),
+      gasoline: Math.round(co2eTons / gasolineCO2 * 10) / 10
+    }
+  }
+}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { calculateAWSCarbonFootprint, formatCarbonResult, CarbonCalculationResult } from "@/lib/carbon-calculator";
+import { calculateAWSCarbonFootprint, formatCarbonResult, CarbonCalculationResult, getCarbonComparisons } from "@/lib/carbon-calculator";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,7 @@ import { Cloud, Database, ChartBar, Leaf, Globe, BarChart3, TrendingUp, Zap, Shi
 import circuitBoard from "@/assets/circuit-board.jpg";
 import codeScreen from "@/assets/code-screen.jpg";
 import analyticsDashboard from "@/assets/analytics-dashboard.jpg";
+import CarbonCalculatorWidget from "@/components/CarbonCalculatorWidget";
 
 const cloudProviders = [
   { value: "aws", label: "Amazon Web Services (AWS)" },
@@ -152,6 +153,86 @@ const Index = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Carbon Impact Comparisons */}
+      {totalCarbonFootprint > 0 && (
+        <Card className="shadow-lg border-0 bg-gradient-to-br from-card to-muted/20">
+          <CardHeader className="bg-gradient-to-r from-warning/5 to-destructive/5 border-b">
+            <CardTitle className="flex items-center gap-3 text-xl">
+              <div className="p-2 rounded-full bg-gradient-to-br from-warning to-destructive">
+                <Globe className="w-5 h-5 text-primary-foreground" />
+              </div>
+              Carbon Impact Comparisons
+            </CardTitle>
+            <CardDescription className="text-base">
+              Your {formatCarbonResult({ co2eTons: totalCarbonFootprint, kilowattHours: 0, cost: 0 })} footprint equals:
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-8">
+            {(() => {
+              const comparisons = getCarbonComparisons(totalCarbonFootprint);
+              return (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="p-6 bg-gradient-to-r from-primary/5 to-primary/10 rounded-xl border border-primary/20">
+                    <div className="flex items-center gap-3 mb-3">
+                      <Zap className="w-6 h-6 text-primary" />
+                      <h4 className="font-semibold text-primary">Flight Equivalent</h4>
+                    </div>
+                    <p className="text-2xl font-bold mb-2">{comparisons.flights.domesticFlights}</p>
+                    <p className="text-sm text-muted-foreground mb-2">Domestic round-trip flights</p>
+                    <p className="text-lg font-semibold">{comparisons.flights.internationalFlights}</p>
+                    <p className="text-xs text-muted-foreground">International flights</p>
+                  </div>
+
+                  <div className="p-6 bg-gradient-to-r from-success/5 to-success/10 rounded-xl border border-success/20">
+                    <div className="flex items-center gap-3 mb-3">
+                      <Shield className="w-6 h-6 text-success" />
+                      <h4 className="font-semibold text-success">Phone Impact</h4>
+                    </div>
+                    <p className="text-2xl font-bold mb-2">{comparisons.phones.smartphoneYears}</p>
+                    <p className="text-sm text-muted-foreground mb-2">Years of smartphone use</p>
+                    <p className="text-lg font-semibold">{comparisons.phones.phoneCharges.toLocaleString()}</p>
+                    <p className="text-xs text-muted-foreground">Phone charges</p>
+                  </div>
+
+                  <div className="p-6 bg-gradient-to-r from-warning/5 to-warning/10 rounded-xl border border-warning/20">
+                    <div className="flex items-center gap-3 mb-3">
+                      <TrendingUp className="w-6 h-6 text-warning" />
+                      <h4 className="font-semibold text-warning">Transport Equivalent</h4>
+                    </div>
+                    <p className="text-2xl font-bold mb-2">{comparisons.cars.milesDriven.toLocaleString()}</p>
+                    <p className="text-sm text-muted-foreground mb-2">Miles driven by car</p>
+                    <p className="text-lg font-semibold">{comparisons.cars.gasoline}</p>
+                    <p className="text-xs text-muted-foreground">Gallons of gasoline</p>
+                  </div>
+                </div>
+              );
+            })()}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Carbon Calculator Widget */}
+      <Card className="shadow-lg border-0 bg-gradient-to-br from-card to-muted/20">
+        <CardHeader className="bg-gradient-to-r from-primary/5 to-success/5 border-b">
+          <CardTitle className="flex items-center gap-3 text-xl">
+            <div className="p-2 rounded-full bg-gradient-to-br from-primary to-success">
+              <Leaf className="w-5 h-5 text-primary-foreground" />
+            </div>
+            Interactive Carbon Calculator
+          </CardTitle>
+          <CardDescription className="text-base">
+            Calculate your personal carbon footprint from flights and other activities
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-8">
+          <CarbonCalculatorWidget 
+            type="flight" 
+            responsive={true}
+            backgroundColor="FFFFFF"
+          />
+        </CardContent>
+      </Card>
 
       <div className="grid lg:grid-cols-2 gap-8">
         {/* Data Collection Form */}
