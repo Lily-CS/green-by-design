@@ -12,7 +12,7 @@ import { Cloud, Database, ChartBar, Leaf, Globe, BarChart3, TrendingUp, Zap, Shi
 import circuitBoard from "@/assets/circuit-board.jpg";
 import codeScreen from "@/assets/code-screen.jpg";
 import analyticsDashboard from "@/assets/analytics-dashboard.jpg";
-import CarbonCalculatorWidget from "@/components/CarbonCalculatorWidget";
+
 
 const cloudProviders = [
   { value: "aws", label: "Amazon Web Services (AWS)" },
@@ -212,27 +212,6 @@ const Index = () => {
         </Card>
       )}
 
-      {/* Carbon Calculator Widget */}
-      <Card className="shadow-lg border-0 bg-gradient-to-br from-card to-muted/20">
-        <CardHeader className="bg-gradient-to-r from-primary/5 to-success/5 border-b">
-          <CardTitle className="flex items-center gap-3 text-xl">
-            <div className="p-2 rounded-full bg-gradient-to-br from-primary to-success">
-              <Leaf className="w-5 h-5 text-primary-foreground" />
-            </div>
-            Interactive Carbon Calculator
-          </CardTitle>
-          <CardDescription className="text-base">
-            Calculate your personal carbon footprint from flights and other activities
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="p-8">
-          <CarbonCalculatorWidget 
-            type="flight" 
-            responsive={true}
-            backgroundColor="FFFFFF"
-          />
-        </CardContent>
-      </Card>
 
       <div className="grid lg:grid-cols-2 gap-8">
         {/* Data Collection Form */}
