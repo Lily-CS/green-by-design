@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { calculateAWSCarbonFootprint, formatCarbonResult, CarbonCalculationResult, getCarbonComparisons } from "@/lib/carbon-calculator";
+import { awsCarbonService } from "@/lib/aws-carbon-service";
+import { AWSConfigForm } from "@/components/AWSConfigForm";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -45,7 +47,13 @@ const Index = () => {
   });
   const [submissions, setSubmissions] = useState<any[]>([]);
   const [totalCarbonFootprint, setTotalCarbonFootprint] = useState<number>(0);
+  const [awsConfigured, setAwsConfigured] = useState(false);
   const { toast } = useToast();
+
+  const handleAWSCredentialsUpdate = (credentials: any) => {
+    awsCarbonService.setCredentials(credentials);
+    setAwsConfigured(!!credentials);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -212,6 +220,8 @@ const Index = () => {
         </Card>
       )}
 
+      {/* AWS Configuration */}
+      <AWSConfigForm onCredentialsUpdate={handleAWSCredentialsUpdate} />
 
       <div className="grid lg:grid-cols-2 gap-8">
         {/* Data Collection Form */}

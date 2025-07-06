@@ -1,9 +1,17 @@
 // Simplified carbon footprint calculation based on cloud usage patterns
+import { awsCarbonService, EnhancedCarbonResult } from './aws-carbon-service';
 
 export interface CarbonCalculationResult {
   co2eTons: number
   kilowattHours: number
   cost: number
+  isRealData?: boolean
+  breakdown?: {
+    compute: number;
+    storage: number;
+    networking: number;
+    memory: number;
+  };
 }
 
 export async function calculateAWSCarbonFootprint(
@@ -12,29 +20,25 @@ export async function calculateAWSCarbonFootprint(
   region: string = 'us-east-1'
 ): Promise<CarbonCalculationResult> {
   try {
-    // Mock calculation based on spend and service type
-    // In production, you'd connect to actual AWS APIs with credentials
-    
-    const estimatedUsage = estimateUsageFromSpend(monthlySpend, serviceCategory)
-    const carbonIntensity = getCarbonIntensityByRegion(region)
-    const energyUsage = estimatedUsage * getEnergyMultiplier(serviceCategory)
-    
-    // Calculate CO2 emissions (tons)
-    const co2eTons = (energyUsage * carbonIntensity) / 1000000 // Convert to tons
+    // Use the AWS Carbon Footprint Service (real data when configured)
+    const result = await awsCarbonService.calculateCarbonFootprint(monthlySpend, serviceCategory, region);
     
     return {
-      co2eTons: Math.round(co2eTons * 100) / 100, // Round to 2 decimals
-      kilowattHours: Math.round(energyUsage * 100) / 100,
-      cost: monthlySpend
-    }
+      co2eTons: result.co2eTons,
+      kilowattHours: result.kilowattHours,
+      cost: result.cost,
+      isRealData: result.isRealData,
+      breakdown: result.breakdown
+    };
   } catch (error) {
     console.error('Carbon footprint calculation error:', error)
     
-    // Fallback calculation if API fails
+    // Fallback calculation if service fails
     return {
       co2eTons: Math.round((monthlySpend * 0.0001) * 100) / 100,
       kilowattHours: Math.round((monthlySpend * 2.1) * 100) / 100,
-      cost: monthlySpend
+      cost: monthlySpend,
+      isRealData: false
     }
   }
 }
@@ -89,10 +93,11 @@ function getCarbonIntensityByRegion(region: string): number {
 }
 
 export function formatCarbonResult(result: CarbonCalculationResult): string {
+  const suffix = result.isRealData ? ' (AWS Data)' : ' (Estimated)';
   if (result.co2eTons < 0.01) {
-    return `${(result.co2eTons * 1000).toFixed(1)} kg CO₂e`
+    return `${(result.co2eTons * 1000).toFixed(1)} kg CO₂e${suffix}`
   }
-  return `${result.co2eTons.toFixed(2)} tons CO₂e`
+  return `${result.co2eTons.toFixed(2)} tons CO₂e${suffix}`
 }
 
 // Carbon comparison calculations
