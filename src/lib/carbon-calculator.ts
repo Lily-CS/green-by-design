@@ -92,12 +92,21 @@ function getCarbonIntensityByRegion(region: string): number {
   return carbonIntensity[region] || 400 // Default average
 }
 
-export function formatCarbonResult(result: CarbonCalculationResult): string {
+export function formatCarbonResult(result: CarbonCalculationResult, unit: string = 'tons'): string {
   const suffix = result.isRealData ? ' (AWS Data)' : ' (Estimated)';
-  if (result.co2eTons < 0.01) {
-    return `${(result.co2eTons * 1000).toFixed(1)} kg CO₂e${suffix}`
+  
+  switch (unit) {
+    case 'kg':
+      return `${(result.co2eTons * 1000).toFixed(1)} kg CO₂e${suffix}`;
+    case 'lbs':
+      return `${(result.co2eTons * 2204.62).toFixed(1)} lbs CO₂e${suffix}`;
+    case 'tons':
+    default:
+      if (result.co2eTons < 0.01) {
+        return `${(result.co2eTons * 1000).toFixed(1)} kg CO₂e${suffix}`;
+      }
+      return `${result.co2eTons.toFixed(2)} tons CO₂e${suffix}`;
   }
-  return `${result.co2eTons.toFixed(2)} tons CO₂e${suffix}`
 }
 
 // Carbon comparison calculations
@@ -139,4 +148,26 @@ export function getCarbonComparisons(co2eTons: number): CarbonComparison {
       gasoline: Math.round(co2eTons / gasolineCO2 * 10) / 10
     }
   }
+}
+
+// Currency formatting utility
+export function formatCurrency(amount: number, currency: string = 'USD'): string {
+  const currencySymbols: Record<string, string> = {
+    'USD': '$',
+    'EUR': '€',
+    'GBP': '£',
+    'CAD': 'C$',
+    'AUD': 'A$',
+    'JPY': '¥',
+    'CNY': '¥',
+    'INR': '₹'
+  };
+
+  const symbol = currencySymbols[currency] || currency + ' ';
+  
+  if (currency === 'JPY' || currency === 'CNY') {
+    return `${symbol}${Math.round(amount).toLocaleString()}`;
+  }
+  
+  return `${symbol}${amount.toLocaleString()}`;
 }

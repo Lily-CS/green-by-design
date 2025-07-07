@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { calculateAWSCarbonFootprint, formatCarbonResult, CarbonCalculationResult, getCarbonComparisons } from "@/lib/carbon-calculator";
+import { calculateAWSCarbonFootprint, formatCarbonResult, formatCurrency, CarbonCalculationResult, getCarbonComparisons } from "@/lib/carbon-calculator";
 import { awsCarbonService } from "@/lib/aws-carbon-service";
 import { AWSConfigForm } from "@/components/AWSConfigForm";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Cloud, Database, ChartBar, Leaf, Globe, BarChart3, TrendingUp, Zap, Shield } from "lucide-react";
+import { Cloud, Database, ChartBar, Leaf, Globe, BarChart3, TrendingUp, Zap, Shield, Settings } from "lucide-react";
 import circuitBoard from "@/assets/circuit-board.jpg";
 import codeScreen from "@/assets/code-screen.jpg";
 import analyticsDashboard from "@/assets/analytics-dashboard.jpg";
@@ -36,6 +36,23 @@ const serviceCategories = [
   { value: "security", label: "Security & Identity" },
 ];
 
+const carbonUnits = [
+  { value: "tons", label: "Metric Tons CO₂e" },
+  { value: "kg", label: "Kilograms CO₂e" },
+  { value: "lbs", label: "Pounds CO₂e" },
+];
+
+const currencies = [
+  { value: "USD", label: "US Dollar ($)" },
+  { value: "EUR", label: "Euro (€)" },
+  { value: "GBP", label: "British Pound (£)" },
+  { value: "CAD", label: "Canadian Dollar (C$)" },
+  { value: "AUD", label: "Australian Dollar (A$)" },
+  { value: "JPY", label: "Japanese Yen (¥)" },
+  { value: "CNY", label: "Chinese Yuan (¥)" },
+  { value: "INR", label: "Indian Rupee (₹)" },
+];
+
 const Index = () => {
   const [formData, setFormData] = useState({
     organization: "",
@@ -49,6 +66,8 @@ const Index = () => {
   const [totalCarbonFootprint, setTotalCarbonFootprint] = useState<number>(0);
   const [awsConfigured, setAwsConfigured] = useState(false);
   const [awsRegion, setAwsRegion] = useState<string>("");
+  const [carbonUnit, setCarbonUnit] = useState<string>("tons");
+  const [currency, setCurrency] = useState<string>("USD");
   const { toast } = useToast();
 
   const handleAWSCredentialsUpdate = (credentials: any) => {
@@ -87,7 +106,7 @@ const Index = () => {
     
     toast({
       title: "Cloud Service Data Recorded!",
-      description: `Added ${formData.provider} services with ${formatCarbonResult(carbonResult)} impact`,
+      description: `Added ${formData.provider} services with ${formatCarbonResult(carbonResult, carbonUnit)} impact`,
     });
     
     // Reset form
@@ -136,7 +155,7 @@ const Index = () => {
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Monthly Spend</p>
                 <p className="text-3xl font-bold text-success">
-                  ${submissions.reduce((sum, s) => sum + Number(s.monthlySpend || 0), 0).toLocaleString()}
+                  {formatCurrency(submissions.reduce((sum, s) => sum + Number(s.monthlySpend || 0), 0), currency)}
                 </p>
               </div>
               <div className="p-3 rounded-full bg-success/10">
@@ -153,7 +172,7 @@ const Index = () => {
                 <p className="text-sm font-medium text-muted-foreground">Carbon Impact</p>
                 <p className="text-3xl font-bold text-warning">
                   {totalCarbonFootprint > 0 
-                    ? formatCarbonResult({ co2eTons: totalCarbonFootprint, kilowattHours: 0, cost: 0 })
+                    ? formatCarbonResult({ co2eTons: totalCarbonFootprint, kilowattHours: 0, cost: 0 }, carbonUnit)
                     : "0 tons CO₂e"
                   }
                 </p>
@@ -177,7 +196,7 @@ const Index = () => {
               Carbon Impact Comparisons
             </CardTitle>
             <CardDescription className="text-base">
-              Your {formatCarbonResult({ co2eTons: totalCarbonFootprint, kilowattHours: 0, cost: 0 })} footprint equals:
+              Your {formatCarbonResult({ co2eTons: totalCarbonFootprint, kilowattHours: 0, cost: 0 }, carbonUnit)} footprint equals:
             </CardDescription>
           </CardHeader>
           <CardContent className="p-8">
@@ -224,7 +243,55 @@ const Index = () => {
         </Card>
       )}
 
-      {/* AWS Configuration - Only show when AWS is selected */}
+      {/* Settings Section */}
+      <Card className="shadow-lg border-0 bg-gradient-to-br from-card to-muted/20">
+        <CardHeader className="bg-gradient-to-r from-muted/5 to-primary/5 border-b">
+          <CardTitle className="flex items-center gap-3 text-xl">
+            <div className="p-2 rounded-full bg-gradient-to-br from-muted to-primary">
+              <Settings className="w-5 h-5 text-primary-foreground" />
+            </div>
+            Display Settings
+          </CardTitle>
+          <CardDescription className="text-base">
+            Customize units and currency for your carbon footprint tracking
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-8">
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="space-y-3">
+              <Label htmlFor="carbon-unit" className="text-base font-medium">Carbon Unit</Label>
+              <Select value={carbonUnit} onValueChange={setCarbonUnit}>
+                <SelectTrigger className="h-12 text-base border-2 focus:border-primary/50">
+                  <SelectValue placeholder="Select carbon unit" />
+                </SelectTrigger>
+                <SelectContent className="bg-background border-2 shadow-lg z-50">
+                  {carbonUnits.map((unit) => (
+                    <SelectItem key={unit.value} value={unit.value} className="text-base">
+                      {unit.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-3">
+              <Label htmlFor="currency" className="text-base font-medium">Currency</Label>
+              <Select value={currency} onValueChange={setCurrency}>
+                <SelectTrigger className="h-12 text-base border-2 focus:border-primary/50">
+                  <SelectValue placeholder="Select currency" />
+                </SelectTrigger>
+                <SelectContent className="bg-background border-2 shadow-lg z-50">
+                  {currencies.map((curr) => (
+                    <SelectItem key={curr.value} value={curr.value} className="text-base">
+                      {curr.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
       {formData.provider === "aws" && (
         <div className="space-y-4">
           {awsConfigured && awsRegion && (
@@ -305,7 +372,7 @@ const Index = () => {
               </div>
 
               <div className="space-y-3">
-                <Label htmlFor="monthlySpend" className="text-base font-medium">Estimated Monthly Spend (USD)</Label>
+                <Label htmlFor="monthlySpend" className="text-base font-medium">Estimated Monthly Spend ({currency})</Label>
                 <Input
                   id="monthlySpend"
                   type="number"
@@ -419,7 +486,7 @@ const Index = () => {
                       <div className="flex items-center gap-2 text-sm">
                         <TrendingUp className="w-4 h-4 text-success" />
                         <span className="text-muted-foreground">Spend:</span>
-                        <span className="font-medium text-success">${Number(submission.monthlySpend).toLocaleString()}/mo</span>
+                        <span className="font-medium text-success">{formatCurrency(Number(submission.monthlySpend), currency)}/mo</span>
                       </div>
                     </div>
                     
@@ -428,7 +495,7 @@ const Index = () => {
                       <span className="text-muted-foreground">Carbon:</span>
                       <span className="font-medium text-warning">
                         {submission.carbonFootprint 
-                          ? formatCarbonResult(submission.carbonFootprint)
+                          ? formatCarbonResult(submission.carbonFootprint, carbonUnit)
                           : "0 kg CO₂e"
                         }
                       </span>
