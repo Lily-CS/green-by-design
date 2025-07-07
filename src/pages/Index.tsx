@@ -64,14 +64,16 @@ const Index = () => {
     const carbonResult = await calculateAWSCarbonFootprint(
       Number(formData.monthlySpend),
       formData.services,
-      'us-east-1' // Default region, could be made configurable
+      awsRegion || 'us-east-1' // Use configured region or default
     );
     
     const newSubmission = {
       ...formData,
       id: Date.now(),
       timestamp: new Date().toLocaleDateString(),
-      carbonFootprint: carbonResult
+      carbonFootprint: carbonResult,
+      region: awsRegion || 'us-east-1',
+      isAWSConfigured: awsConfigured
     };
     
     const updatedSubmissions = [...submissions, newSubmission];
@@ -432,11 +434,20 @@ const Index = () => {
                       </span>
                     </div>
                     
-                    <div className="text-xs text-muted-foreground flex items-center gap-2">
+                    <div className="text-xs text-muted-foreground flex items-center gap-2 flex-wrap">
                       <span>•</span>
                       <span>{submission.services}</span>
                       <span>•</span>
                       <span>{submission.timestamp}</span>
+                      {submission.region && (
+                        <>
+                          <span>•</span>
+                          <div className="flex items-center gap-1">
+                            <Globe className="w-3 h-3" />
+                            <span>{submission.region}</span>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 ))}
