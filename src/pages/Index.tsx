@@ -220,8 +220,10 @@ const Index = () => {
         </Card>
       )}
 
-      {/* AWS Configuration */}
-      <AWSConfigForm onCredentialsUpdate={handleAWSCredentialsUpdate} />
+      {/* AWS Configuration - Only show when AWS is selected */}
+      {formData.provider === "aws" && (
+        <AWSConfigForm onCredentialsUpdate={handleAWSCredentialsUpdate} />
+      )}
 
       <div className="grid lg:grid-cols-2 gap-8">
         {/* Data Collection Form */}
