@@ -48,11 +48,13 @@ const Index = () => {
   const [submissions, setSubmissions] = useState<any[]>([]);
   const [totalCarbonFootprint, setTotalCarbonFootprint] = useState<number>(0);
   const [awsConfigured, setAwsConfigured] = useState(false);
+  const [awsRegion, setAwsRegion] = useState<string>("");
   const { toast } = useToast();
 
   const handleAWSCredentialsUpdate = (credentials: any) => {
     awsCarbonService.setCredentials(credentials);
     setAwsConfigured(!!credentials);
+    setAwsRegion(credentials?.region || "");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -222,7 +224,22 @@ const Index = () => {
 
       {/* AWS Configuration - Only show when AWS is selected */}
       {formData.provider === "aws" && (
-        <AWSConfigForm onCredentialsUpdate={handleAWSCredentialsUpdate} />
+        <div className="space-y-4">
+          {awsConfigured && awsRegion && (
+            <Card className="bg-gradient-to-r from-success/10 to-primary/10 border-success/30">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2">
+                  <Globe className="w-4 h-4 text-success" />
+                  <span className="text-sm font-medium">AWS Region:</span>
+                  <Badge variant="outline" className="bg-success/10 text-success">
+                    {awsRegion}
+                  </Badge>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          <AWSConfigForm onCredentialsUpdate={handleAWSCredentialsUpdate} />
+        </div>
       )}
 
       <div className="grid lg:grid-cols-2 gap-8">
