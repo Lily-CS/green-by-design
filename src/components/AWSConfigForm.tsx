@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Settings, Eye, EyeOff } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AWSCredentials {
   accessKeyId: string;
@@ -40,22 +41,33 @@ export const AWSConfigForm = ({ onCredentialsUpdate }: AWSConfigFormProps) => {
   const { toast } = useToast();
 
   // Load existing credentials on mount
-  useState(() => {
-    const stored = localStorage.getItem('aws-credentials');
-    if (stored) {
+  useEffect(() => {
+    const loadCredentials = async () => {
       try {
-        const parsed = JSON.parse(stored);
-        setCredentials(parsed);
-        setIsConfigured(true);
-        onCredentialsUpdate(parsed);
-      } catch (error) {
-        console.error('Failed to parse stored AWS credentials:', error);
-        localStorage.removeItem('aws-credentials');
-      }
-    }
-  });
+        const { data, error } = await supabase
+          .from('aws_credentials')
+          .select('*')
+          .single();
 
-  const handleSave = () => {
+        if (data && !error) {
+          const creds = {
+            accessKeyId: data.access_key_id,
+            secretAccessKey: data.secret_access_key,
+            region: data.region
+          };
+          setCredentials(creds);
+          setIsConfigured(true);
+          onCredentialsUpdate(creds);
+        }
+      } catch (error) {
+        console.error('Failed to load AWS credentials:', error);
+      }
+    };
+
+    loadCredentials();
+  }, []);
+
+  const handleSave = async () => {
     if (!credentials.accessKeyId || !credentials.secretAccessKey) {
       toast({
         title: "Missing credentials",
@@ -66,7 +78,17 @@ export const AWSConfigForm = ({ onCredentialsUpdate }: AWSConfigFormProps) => {
     }
 
     try {
-      localStorage.setItem('aws-credentials', JSON.stringify(credentials));
+      const { error } = await supabase
+        .from('aws_credentials')
+        .upsert({
+          user_id: (await supabase.auth.getUser()).data.user?.id,
+          access_key_id: credentials.accessKeyId,
+          secret_access_key: credentials.secretAccessKey,
+          region: credentials.region
+        });
+
+      if (error) throw error;
+
       setIsConfigured(true);
       onCredentialsUpdate(credentials);
       toast({
@@ -82,19 +104,33 @@ export const AWSConfigForm = ({ onCredentialsUpdate }: AWSConfigFormProps) => {
     }
   };
 
-  const handleClear = () => {
-    localStorage.removeItem('aws-credentials');
-    setCredentials({
-      accessKeyId: "",
-      secretAccessKey: "",
-      region: "us-east-1"
-    });
-    setIsConfigured(false);
-    onCredentialsUpdate(null);
-    toast({
-      title: "AWS credentials cleared",
-      description: "Reverting to estimated carbon footprint calculations",
-    });
+  const handleClear = async () => {
+    try {
+      const { error } = await supabase
+        .from('aws_credentials')
+        .delete()
+        .eq('user_id', (await supabase.auth.getUser()).data.user?.id);
+
+      if (error) throw error;
+
+      setCredentials({
+        accessKeyId: "",
+        secretAccessKey: "",
+        region: "us-east-1"
+      });
+      setIsConfigured(false);
+      onCredentialsUpdate(null);
+      toast({
+        title: "AWS credentials cleared",
+        description: "Reverting to estimated carbon footprint calculations",
+      });
+    } catch (error) {
+      toast({
+        title: "Failed to clear credentials",
+        description: "Please try again",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -197,7 +233,7 @@ export const AWSConfigForm = ({ onCredentialsUpdate }: AWSConfigFormProps) => {
 
           <div className="p-4 bg-muted/50 rounded-lg border border-muted-foreground/20">
             <p className="text-sm text-muted-foreground mb-2">
-              <strong>Security Note:</strong> Credentials are stored in your browser's localStorage. 
+              <strong>Security Note:</strong> Credentials are securely stored in your Supabase database with Row Level Security. 
               For production applications, consider using AWS IAM roles or a secure backend service.
             </p>
             <p className="text-xs text-muted-foreground">

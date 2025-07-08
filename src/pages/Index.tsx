@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { calculateAWSCarbonFootprint, formatCarbonResult, formatCurrency, CarbonCalculationResult, getCarbonComparisons } from "@/lib/carbon-calculator";
 import { awsCarbonService } from "@/lib/aws-carbon-service";
 import { AWSConfigForm } from "@/components/AWSConfigForm";
+import { AuthWrapper } from "@/components/auth/AuthWrapper";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -122,7 +123,8 @@ const Index = () => {
 
 
   return (
-    <div className="p-6 space-y-8">
+    <AuthWrapper>
+      <div className="p-6 space-y-8">
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -532,6 +534,7 @@ const Index = () => {
         </Card>
       </div>
     </div>
+    </AuthWrapper>
   );
 };
 

@@ -14,7 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      aws_credentials: {
+        Row: {
+          access_key_id: string
+          created_at: string
+          id: string
+          region: string
+          secret_access_key: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_key_id: string
+          created_at?: string
+          id?: string
+          region?: string
+          secret_access_key: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_key_id?: string
+          created_at?: string
+          id?: string
+          region?: string
+          secret_access_key?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
