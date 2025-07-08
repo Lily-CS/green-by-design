@@ -47,7 +47,8 @@ export const AWSConfigForm = ({ onCredentialsUpdate }: AWSConfigFormProps) => {
         const { data, error } = await supabase
           .from('aws_credentials')
           .select('*')
-          .single();
+          .eq('is_default', true)
+          .maybeSingle();
 
         if (data && !error) {
           const creds = {
@@ -65,7 +66,7 @@ export const AWSConfigForm = ({ onCredentialsUpdate }: AWSConfigFormProps) => {
     };
 
     loadCredentials();
-  }, []);
+  }, [onCredentialsUpdate]);
 
   const handleSave = async () => {
     if (!credentials.accessKeyId || !credentials.secretAccessKey) {
@@ -78,13 +79,21 @@ export const AWSConfigForm = ({ onCredentialsUpdate }: AWSConfigFormProps) => {
     }
 
     try {
+      // First, clear any existing default credentials
+      await supabase
+        .from('aws_credentials')
+        .update({ is_default: false })
+        .eq('is_default', true);
+
+      // Insert or update the new default credentials
       const { error } = await supabase
         .from('aws_credentials')
         .upsert({
-          user_id: (await supabase.auth.getUser()).data.user?.id,
           access_key_id: credentials.accessKeyId,
           secret_access_key: credentials.secretAccessKey,
-          region: credentials.region
+          region: credentials.region,
+          is_default: true,
+          user_id: null
         });
 
       if (error) throw error;
@@ -109,7 +118,7 @@ export const AWSConfigForm = ({ onCredentialsUpdate }: AWSConfigFormProps) => {
       const { error } = await supabase
         .from('aws_credentials')
         .delete()
-        .eq('user_id', (await supabase.auth.getUser()).data.user?.id);
+        .eq('is_default', true);
 
       if (error) throw error;
 
@@ -233,7 +242,7 @@ export const AWSConfigForm = ({ onCredentialsUpdate }: AWSConfigFormProps) => {
 
           <div className="p-4 bg-muted/50 rounded-lg border border-muted-foreground/20">
             <p className="text-sm text-muted-foreground mb-2">
-              <strong>Security Note:</strong> Credentials are securely stored in your Supabase database with Row Level Security. 
+              <strong>Security Note:</strong> Credentials are securely stored in your Supabase database. 
               For production applications, consider using AWS IAM roles or a secure backend service.
             </p>
             <p className="text-xs text-muted-foreground">
