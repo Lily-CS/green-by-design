@@ -133,6 +133,10 @@ const Index = () => {
         </div>
       </div>
 
+    <h2 className="text-2xl font-semibold text-blue-600">
+  👋 Hello World from Harsh!
+</h2>
+
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
