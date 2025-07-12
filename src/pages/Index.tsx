@@ -134,7 +134,7 @@ const Index = () => {
       </div>
 
     <h2 className="text-2xl font-semibold text-blue-600">
-  👋 Hello World from Harsh1234 and Aaron!
+  👋 Hello World from Harsh1234 and Aaron and Darren!
 </h2>
 
       {/* Stats Cards */}
