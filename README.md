@@ -1,3 +1,7 @@
+###
+Check-in:
+Aaron Quashnock
+
 # Welcome to your Lovable project
 
 ## Project info
